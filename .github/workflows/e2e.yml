@@ -1,0 +1,26 @@
+name: E2E
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * 1"
+  pull_request:
+    paths: ["src/**", "e2e/**", "package.json", "bun.lock"]
+
+jobs:
+  chatwoot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - run: bun install --frozen-lockfile
+      - run: bun e2e/bootstrap.ts
+      - run: bun run test:e2e
+      - if: failure()
+        run: docker compose -f e2e/docker-compose.yml logs --tail 200 rails sidekiq
+      - if: always()
+        run: docker compose -f e2e/docker-compose.yml down -v

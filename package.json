@@ -1,0 +1,77 @@
+{
+  "name": "chat-adapter-chatwoot",
+  "version": "0.1.0",
+  "description": "Chatwoot adapter for Chat SDK",
+  "author": "nivandres",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nivandres/chat-adapter-chatwoot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nivandres/chat-adapter-chatwoot/issues"
+  },
+  "homepage": "https://github.com/nivandres/chat-adapter-chatwoot#readme",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "CHANGELOG.md",
+    "sample-messages.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run --coverage",
+    "test:watch": "vitest",
+    "test:e2e": "bun --env-file=.env.e2e run vitest run src/e2e",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "bun run typecheck && bun run lint && bun run format:check && bun run test",
+    "prepublishOnly": "bun run clean && bun run check && bun run build",
+    "clean": "rm -rf dist"
+  },
+  "peerDependencies": {
+    "@chat-adapter/shared": "^4.40.0",
+    "chat": "^4.40.0"
+  },
+  "dependencies": {
+    "zod": "^4.6.4"
+  },
+  "devDependencies": {
+    "@chat-adapter/shared": "^4.40.0",
+    "@types/node": "^22.20.2",
+    "@vitest/coverage-v8": "^4.1.11",
+    "chat": "^4.40.0",
+    "oxlint": "^1.82.0",
+    "prettier": "^3.9.6",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.11"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "chat-sdk",
+    "chat-adapter",
+    "chatwoot",
+    "bot",
+    "customer-support",
+    "omnichannel"
+  ]
+}
