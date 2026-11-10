@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.2
+
+### Fixed
+
+- The README now gives the Chatwoot versions that sign webhooks, 4.11.2 for account webhooks and 4.13 for API inbox and agent bot webhooks. On an older install the adapter refuses every delivery, with no hint why.
+- The README's handoff example assigned an agent and then opened the conversation, which with an agent token reassigns it to the bot's own agent. It now opens the conversation first.
+
 ## 0.1.1
 
 ### Fixed

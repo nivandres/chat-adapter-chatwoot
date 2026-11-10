@@ -72,6 +72,8 @@ Subscribe an account webhook to at least `message_created`. Add `message_updated
 
 Each source signs with its own secret. Copy every one that reaches your route into `CHATWOOT_WEBHOOK_SECRET`, separated by commas, or pass `webhookSecret: [accountSecret, inboxSecret]`. Without a secret, the adapter refuses every webhook with `401`.
 
+Chatwoot signs account webhooks from 4.11.2, and API inbox and agent bot webhooks from 4.13. An older install sends them unsigned, so the adapter refuses every delivery, and with an agent bot every conversation opens at once.
+
 ### Agent bot tokens
 
 Chatwoot's `BOT_ACCESSIBLE_ENDPOINTS` let an agent bot token post messages and private notes, stream, read the conversation, toggle typing, and change status, priority, assignment, labels, and custom attributes. Chatwoot refuses the rest with `401 Access to this endpoint is not authorized for bots`, which the adapter raises as a `PermissionError`: `fetchMessage`, `deleteMessage`, `markAsRead`, `markAsUnread`, `mute`, `unmute`, `listThreads`, `fetchChannelInfo`, `getUser`, `fetchContact`, `listAgents`, and `openDM`. Since a bot token cannot list messages, `fetchMessages` answers empty and Chat SDK serves the thread history it keeps (`persistThreadHistory`). The adapter detects an agent bot token at startup and logs a warning rather than failing.
@@ -264,8 +266,8 @@ bot.onDirectMessage(async (thread, message) => {
     `${chatwootMention(30, "Bruce")} needs a look`,
   );
   await chatwoot.setLabels(thread.id, ["needs-human"]);
-  await chatwoot.assign({ threadId: thread.id, assigneeId: 30 });
   await chatwoot.toggleStatus({ threadId: thread.id, status: "open" });
+  await chatwoot.assign({ threadId: thread.id, assigneeId: 30 });
 });
 ```
 
