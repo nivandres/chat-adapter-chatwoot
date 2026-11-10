@@ -35,7 +35,9 @@ export function createChatwootAdapter(
   const userName = config?.userName ?? process.env.CHATWOOT_USER_NAME;
   const webhookSecret =
     config?.webhookSecret ??
-    process.env.CHATWOOT_WEBHOOK_SECRET?.split(",").filter(Boolean);
+    process.env.CHATWOOT_WEBHOOK_SECRET?.split(",")
+      .map((secret) => secret.trim())
+      .filter(Boolean);
 
   if (!accessToken)
     throw new ValidationError(

@@ -1,6 +1,6 @@
 {
   "name": "chat-adapter-chatwoot",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Chatwoot adapter for Chat SDK",
   "author": "nivandres",
   "license": "MIT",

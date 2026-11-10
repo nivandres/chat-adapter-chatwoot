@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.1
+
+### Fixed
+
+- A modal with a `closeLabel` stopped only on that word, although its hint tells contacts to send **cancel**. Either now stops it.
+- A space after a comma in `CHATWOOT_WEBHOOK_SECRET` became part of the next secret, so every webhook signed with it was refused. Each secret is now trimmed.
+
 ## 0.1.0
 
 Initial release, run end to end against Chatwoot 4.18 — account webhooks, API inbox webhooks and an agent bot.

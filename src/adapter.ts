@@ -941,7 +941,9 @@ export class ChatwootAdapter implements Adapter<
     const texts = this.texts();
     const text = payload.content?.trim() ?? "";
     if (
-      text.toLowerCase() === (form.closeLabel ?? texts.cancel).toLowerCase()
+      [texts.cancel, form.closeLabel].some(
+        (word) => word?.toLowerCase() === text.toLowerCase(),
+      )
     ) {
       await state.delete(key);
       await this.postMessage(threadId, texts.cancelled);

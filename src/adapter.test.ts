@@ -128,6 +128,20 @@ describe("createChatwootAdapter", () => {
     expect(adapter.accountId).toBe(7);
   });
 
+  it("reads every webhook secret from the environment, spaces after commas included", async () => {
+    process.env.CHATWOOT_BASE_URL = BASE_URL;
+    process.env.CHATWOOT_ACCESS_TOKEN = "env-token";
+    process.env.CHATWOOT_ACCOUNT_ID = "2";
+    process.env.CHATWOOT_WEBHOOK_SECRET = "account, inbox";
+
+    const adapter = createChatwootAdapter();
+    for (const secret of ["account", "inbox"])
+      expect(
+        (await adapter.handleWebhook(signRequest(webhookMessage(), secret)))
+          .status,
+      ).toBe(200);
+  });
+
   it("throws when the access token is missing", () => {
     delete process.env.CHATWOOT_ACCESS_TOKEN;
     expect(() => createChatwootAdapter({ accountId: 2 })).toThrow(
@@ -1011,6 +1025,28 @@ describe("slash commands and modals", () => {
     expect(recorder.messages.map(({ message }) => message.text)).toEqual([
       "after",
     ]);
+  });
+
+  it("stops on its closeLabel as well as on cancel", async () => {
+    const { adapter, recorder, deliver } = await initialized();
+    const requests = serve();
+    const modal = Modal({
+      callbackId: "survey",
+      title: "Survey",
+      closeLabel: "Salir",
+      notifyOnClose: true,
+      children: [TextInput({ id: "a", label: "A" })],
+    });
+
+    for (const [id, word] of [
+      [3151, "salir"],
+      [3152, "cancel"],
+    ] as const) {
+      await adapter.openModal(trigger, modal, "ctx");
+      await deliver(webhookMessage({ id, content: word }));
+      expect(lastPosted(requests)).toBe("Cancelled.");
+    }
+    expect(recorder.closes).toHaveLength(2);
   });
 
   it("speaks the language it is given, and refuses a trigger it never issued", async () => {
