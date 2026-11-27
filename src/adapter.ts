@@ -10,6 +10,7 @@ import {
   extractCard,
   extractFiles,
   extractPostableAttachments,
+  parseRetryAfter,
 } from "@chat-adapter/shared";
 import type {
   Adapter,
@@ -345,7 +346,7 @@ export class ChatwootAdapter implements Adapter<
       case 429:
         return new AdapterRateLimitError(
           this.name,
-          retryAfterSeconds(response.headers.get("retry-after")),
+          parseRetryAfter(response.headers.get("retry-after")),
         );
       default: {
         const message = `${route} failed with status ${response.status}${detail ? `: ${detail}` : ""}`;
@@ -1112,7 +1113,7 @@ export class ChatwootAdapter implements Adapter<
   ): Message<ChatwootMessage> {
     const message = this.parse(ChatwootMessageSchema, raw, "parseMessage");
     const content = message.content || describeAttachments(message.attachments);
-    const formatted = this.converter.toAst(content);
+    const { text, formatted } = this.converter.parseIncoming(content);
     const author = this.authorOf(message.sender);
     // An agent token posts as a `user`, which is no bot to Chatwoot but is one
     // to Chat SDK, whose own sent messages read `isBot: true, isMe: true`.
@@ -1122,7 +1123,7 @@ export class ChatwootAdapter implements Adapter<
     return new Message<ChatwootMessage>({
       id: String(message.id),
       threadId: threadId ?? this.threadIdOf(message),
-      text: this.converter.extractPlainText(content),
+      text,
       formatted,
       raw: message,
       author,
@@ -2058,19 +2059,6 @@ function digest(value: string): string {
     .update(value)
     .digest("base64url")
     .slice(0, 22);
-}
-
-/**
- * `Retry-After` in seconds, given either as seconds or as an HTTP date.
- * Undefined when absent or unreadable.
- */
-function retryAfterSeconds(header: string | null): number | undefined {
-  if (!header) return undefined;
-  const seconds = Number(header);
-  const wait = Number.isNaN(seconds)
-    ? (Date.parse(header) - Date.now()) / 1000
-    : seconds;
-  return Number.isNaN(wait) ? undefined : Math.max(0, Math.ceil(wait));
 }
 
 /**

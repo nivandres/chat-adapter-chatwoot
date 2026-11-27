@@ -1151,6 +1151,20 @@ describe("slash commands and modals", () => {
 });
 
 describe("parseMessage", () => {
+  it("keeps text that is slow to parse as one plain node, as Chat SDK does", () => {
+    const adapter = createAdapter();
+    const content = `${"**a** ".repeat(600)}end`;
+    const message = adapter.parseMessage(webhookMessage({ content }) as never);
+
+    expect(message.text).toBe(content);
+    expect(message.formatted).toEqual({
+      type: "root",
+      children: [
+        { type: "paragraph", children: [{ type: "text", value: content }] },
+      ],
+    });
+  });
+
   it("parses a REST payload with the thread ID supplied", () => {
     const adapter = createAdapter();
     const message = adapter.parseMessage(restMessage() as never, THREAD_ID);

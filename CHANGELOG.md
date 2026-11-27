@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.2.0
+
+### Changed
+
+- Needs `chat` and `@chat-adapter/shared` 4.45 or newer: messages are parsed with Chat SDK's bounded `parseIncoming()`, and `Retry-After` is read with its `parseRetryAfter()`.
+
+### Fixed
+
+- An incoming message that is slow to parse as markdown, such as thousands of `*` or quotes nested hundreds deep, could hold a webhook for seconds or overflow the stack, and it was parsed twice, once for `formatted` and once for `text`. It is now parsed once, with Chat SDK's limits: text over them keeps its content in both `text` and `formatted`, without markdown structure.
+- A `Retry-After` that is neither whole seconds nor an HTTP date, such as `1.5` or a loosely written date, set the wait before a retry. It is now ignored, as Chat SDK reads the header, and the usual backoff applies.
+
 ## 0.1.2
 
 ### Fixed

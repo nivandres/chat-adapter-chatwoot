@@ -1,6 +1,6 @@
 {
   "name": "chat-adapter-chatwoot",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Chatwoot adapter for Chat SDK",
   "author": "nivandres",
   "license": "MIT",
@@ -46,17 +46,17 @@
     "clean": "rm -rf dist"
   },
   "peerDependencies": {
-    "@chat-adapter/shared": "^4.40.0",
-    "chat": "^4.40.0"
+    "@chat-adapter/shared": "^4.45.0",
+    "chat": "^4.45.0"
   },
   "dependencies": {
     "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@chat-adapter/shared": "^4.40.0",
+    "@chat-adapter/shared": "^4.45.0",
     "@types/node": "^22.20.2",
     "@vitest/coverage-v8": "^5.1.0",
-    "chat": "^4.40.0",
+    "chat": "^4.45.0",
     "oxlint": "^1.82.0",
     "prettier": "^3.9.6",
     "tsup": "^9.0.0",
